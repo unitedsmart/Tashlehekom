@@ -16,7 +16,8 @@ workflows:
           flutter pub get
       - name: Generate iOS files
         script: |
-          flutter build ios --config-only
+          flutter precache --ios
+          flutter build ios --config-only --no-codesign
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
