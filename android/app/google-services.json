@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "281285545629",
+    "project_id": "tashlehekom",
+    "storage_bucket": "tashlehekom.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281285545629:android:b376e828f73d0f24518e74",
+        "android_client_info": {
+          "package_name": "com.tashlehekom.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2C9sU4qN7P4Pai5lt3Kvp5qwFJ-LXbQE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
