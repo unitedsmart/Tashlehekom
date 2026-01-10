@@ -20,11 +20,10 @@ workflows:
           flutter build ios --config-only --no-codesign
       - name: Install CocoaPods dependencies
         script: |
-          cd ios && pod install
-      - name: Fix Xcode 16 compatibility
-        script: |
           cd ios
-          find Pods -name "*.xcconfig" -exec sed -i '' 's/DT_TOOLCHAIN_DIR/TOOLCHAIN_DIR/g' {} \;
+          rm -rf Pods Podfile.lock
+          pod repo update
+          pod install --repo-update
       - name: Build iOS
         script: |
           flutter build ipa --release --no-codesign

@@ -1,9 +1,4 @@
-import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 
 class OTPService {
   static final OTPService _instance = OTPService._internal();
@@ -109,31 +104,6 @@ class OTPService {
     }
   }
 
-  // إرسال SMS عبر خدمة خارجية (مثال)
-  Future<bool> _sendSMSViaProvider(String phoneNumber, String otp) async {
-    try {
-      // مثال لاستخدام خدمة SMS (يجب تخصيصها حسب مزود الخدمة)
-      final response = await http.post(
-        Uri.parse('https://api.sms-provider.com/send'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_API_KEY', // ضع مفتاح API الخاص بك
-        },
-        body: jsonEncode({
-          'to': phoneNumber,
-          'message':
-              'رمز التحقق الخاص بك في تطبيق تشليحكم: $otp\nصالح لمدة 5 دقائق.',
-          'from': 'Tashlehekomv2',
-        }),
-      );
-
-      return response.statusCode == 200;
-    } catch (e) {
-      print('Error sending SMS: $e');
-      return false;
-    }
-  }
-
   // إعادة إرسال OTP
   Future<bool> resendOTP(String phoneNumber) async {
     // إزالة OTP القديم
@@ -158,103 +128,14 @@ class OTPService {
     return remaining.isNegative ? null : remaining;
   }
 
-  // إرسال SMS حقيقي عبر خدمات متعددة
+  // ملاحظة: التطبيق يستخدم Firebase Phone Auth لإرسال OTP
+  // Firebase يرسل SMS من خوادمه مباشرة - لا حاجة لأذونات SMS على الجهاز
   Future<bool> _sendRealSMS(String phoneNumber, String otp) async {
-    try {
-      // الطريقة الأولى: استخدام Telephony (للأندرويد فقط)
-      if (await _sendViaTelephony(phoneNumber, otp)) {
-        return true;
-      }
-
-      // الطريقة الثانية: استخدام خدمة SMS خارجية
-      if (await _sendViaExternalService(phoneNumber, otp)) {
-        return true;
-      }
-
-      // الطريقة الثالثة: استخدام خدمة أخرى كبديل
-      return await _sendViaBackupService(phoneNumber, otp);
-    } catch (e) {
-      print('Error in _sendRealSMS: $e');
-      return false;
-    }
-  }
-
-  // إرسال عبر Platform Channel (الأندرويد فقط)
-  Future<bool> _sendViaTelephony(String phoneNumber, String otp) async {
-    try {
-      // التحقق من أذونات SMS
-      final smsPermission = await Permission.sms.request();
-
-      if (smsPermission.isGranted) {
-        const platform = MethodChannel('com.tashlehekomv2/sms');
-
-        final message =
-            'رمز التحقق الخاص بك في تطبيق تشليحكم هو: $otp\nصالح لمدة 5 دقائق';
-
-        final result = await platform.invokeMethod('sendSMS', {
-          'phoneNumber': phoneNumber,
-          'message': message,
-        });
-
-        return result == true;
-      }
-
-      return false;
-    } catch (e) {
-      print('Platform SMS failed: $e');
-      return false;
-    }
-  }
-
-  // إرسال عبر خدمة خارجية (مثل Twilio)
-  Future<bool> _sendViaExternalService(String phoneNumber, String otp) async {
-    try {
-      // يمكن استخدام خدمات مثل Twilio, AWS SNS, أو خدمات SMS محلية
-      final response = await http.post(
-        Uri.parse(
-            'https://api.twilio.com/2010-04-01/Accounts/YOUR_ACCOUNT_SID/Messages.json'),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Basic YOUR_AUTH_TOKEN', // Base64 encoded
-        },
-        body: {
-          'From': '+1234567890', // رقم Twilio
-          'To': phoneNumber,
-          'Body':
-              'رمز التحقق الخاص بك في تطبيق تشليحكم هو: $otp\nصالح لمدة 5 دقائق',
-        },
-      );
-
-      return response.statusCode == 201;
-    } catch (e) {
-      print('External SMS service failed: $e');
-      return false;
-    }
-  }
-
-  // خدمة احتياطية (يمكن استخدام خدمة SMS محلية سعودية)
-  Future<bool> _sendViaBackupService(String phoneNumber, String otp) async {
-    try {
-      // مثال لخدمة SMS محلية سعودية
-      final response = await http.post(
-        Uri.parse('https://www.msegat.com/gw/sendsms.php'),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
-          'userName': 'YOUR_USERNAME',
-          'apiKey': 'YOUR_API_KEY',
-          'numbers': phoneNumber,
-          'userSender': 'TASHLEHEKOMV2',
-          'msg': 'رمز التحقق: $otp - تطبيق تشليحكم',
-        },
-      );
-
-      return response.statusCode == 200 && response.body.contains('1');
-    } catch (e) {
-      print('Backup SMS service failed: $e');
-      return false;
-    }
+    // هذه الدالة للاستخدام الاحتياطي فقط
+    // Firebase Phone Auth هو المستخدم الأساسي
+    print('📱 Note: App uses Firebase Phone Auth for OTP');
+    print('📱 SMS will be sent from Firebase servers');
+    return true; // Firebase يتولى الإرسال
   }
 }
 

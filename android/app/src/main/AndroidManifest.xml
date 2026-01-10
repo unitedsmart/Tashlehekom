@@ -10,11 +10,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
-    <!-- SMS Permissions -->
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- SMS Permissions - REMOVED: Using Firebase Phone Auth instead -->
+    <!-- Firebase sends SMS from its servers, no device SMS permission needed -->
 
     <!-- Firebase Cloud Messaging Permissions -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
