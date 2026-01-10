@@ -39,8 +39,8 @@ target 'Runner' do
 end
 
 post_install do |installer|
-  # Fix Xcode 16 -G flag issue for BoringSSL-GRPC
   installer.pods_project.targets.each do |target|
+    # Fix Xcode 16 -G flag issue for BoringSSL-GRPC
     if target.name == 'BoringSSL-GRPC'
       target.source_build_phase.files.each do |file|
         if file.settings && file.settings['COMPILER_FLAGS']
@@ -58,6 +58,13 @@ post_install do |installer|
         '$(inherited)',
         'PERMISSION_NOTIFICATIONS=1',
       ]
+
+      # Fix Xcode 16 C++ template issue for gRPC-Core
+      if target.name == 'gRPC-Core' || target.name == 'gRPC-C++'
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -Wno-error'
+      end
+
       # Fix Xcode 16 toolchain path
       if config.base_configuration_reference
         xcconfig_path = config.base_configuration_reference.real_path
