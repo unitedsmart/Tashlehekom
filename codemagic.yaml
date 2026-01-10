@@ -13,7 +13,10 @@ workflows:
           keychain initialize
       - name: Get Flutter packages
         script: |
-          flutter packages pub get
+          flutter pub get
+      - name: Generate iOS files
+        script: |
+          flutter build ios --config-only
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
@@ -34,7 +37,7 @@ workflows:
     scripts:
       - name: Get Flutter packages
         script: |
-          flutter packages pub get
+          flutter pub get
       - name: Build AAB
         script: |
           flutter build appbundle --release
