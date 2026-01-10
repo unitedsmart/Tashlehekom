@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>أيقونة سيارة بسيطة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            margin: 20px;
+            background: white;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .preview {
+            display: inline-block;
+            margin: 20px;
+            text-align: center;
+        }
+        .preview canvas {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚗 أيقونة سيارة بسيطة لتشليحكم</h1>
+    
+    <div class="preview">
+        <h3>الأيقونة الرئيسية</h3>
+        <canvas id="mainIcon" width="1024" height="1024"></canvas>
+        <br>
+        <button onclick="downloadIcon('mainIcon', 'simple_car_app_icon.png')">تحميل الأيقونة الرئيسية</button>
+    </div>
+    
+    <div class="preview">
+        <h3>أيقونة المقدمة</h3>
+        <canvas id="foregroundIcon" width="1024" height="1024"></canvas>
+        <br>
+        <button onclick="downloadIcon('foregroundIcon', 'simple_car_foreground.png')">تحميل أيقونة المقدمة</button>
+    </div>
+    
+    <br><br>
+    <button onclick="createAllIcons()" style="font-size: 20px; padding: 20px 40px;">🎨 إنشاء الأيقونات</button>
+    
+    <script>
+        function createMainIcon() {
+            const canvas = document.getElementById('mainIcon');
+            const ctx = canvas.getContext('2d');
+            const size = 1024;
+            
+            // مسح الكانفاس
+            ctx.clearRect(0, 0, size, size);
+            
+            // رسم خلفية دائرية خضراء
+            const gradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            gradient.addColorStop(0, '#66BB6A');
+            gradient.addColorStop(1, '#4CAF50');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 20, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // رسم حدود بيضاء
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 16;
+            ctx.stroke();
+            
+            // رسم emoji سيارة كبيرة
+            ctx.font = '400px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'white';
+            ctx.fillText('🚗', size/2, size/2 - 50);
+            
+            // إضافة نص تشليحكم
+            ctx.font = 'bold 70px Arial';
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillText('تشليحكم', size/2, size - 120);
+            ctx.shadowColor = 'transparent';
+        }
+        
+        function createForegroundIcon() {
+            const canvas = document.getElementById('foregroundIcon');
+            const ctx = canvas.getContext('2d');
+            const size = 1024;
+            
+            // مسح الكانفاس (خلفية شفافة)
+            ctx.clearRect(0, 0, size, size);
+            
+            // رسم emoji سيارة
+            ctx.font = '600px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🚗', size/2, size/2);
+        }
+        
+        function createAllIcons() {
+            createMainIcon();
+            createForegroundIcon();
+            alert('✅ تم إنشاء الأيقونات بنجاح!\n\nاضغط على أزرار التحميل لحفظ الأيقونات.');
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // إنشاء الأيقونات تلقائياً عند تحميل الصفحة
+        window.onload = function() {
+            createAllIcons();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء أيقونات ES تلقائياً</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            font-size: 2.5em; 
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        canvas { 
+            border: 3px solid rgba(255,255,255,0.3); 
+            margin: 10px; 
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        canvas:hover {
+            transform: scale(1.05);
+        }
+        button { 
+            background: linear-gradient(45deg, #295490, #1e3d6f);
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            margin: 10px; 
+            cursor: pointer; 
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .preview-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .size-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .download-section {
+            margin-top: 30px;
+        }
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 مولد أيقونة ES</h1>
+        <div class="subtitle">United Saudi - تطبيق تشليحكم</div>
+        
+        <div class="preview-section">
+            <h3>🖼️ معاينة الأيقونات:</h3>
+            <div id="canvases"></div>
+        </div>
+        
+        <div class="download-section">
+            <button onclick="downloadAll()" style="font-size: 18px; padding: 20px 40px;">
+                📥 تحميل جميع الأيقونات
+            </button>
+            <button onclick="createZip()" style="background: linear-gradient(45deg, #28a745, #20c997);">
+                📦 تحميل كملف مضغوط
+            </button>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 تعليمات التثبيت:</h3>
+            <div class="step">
+                <strong>1.</strong> اضغط على "تحميل جميع الأيقونات" أعلاه
+            </div>
+            <div class="step">
+                <strong>2.</strong> انسخ الملفات إلى المجلدات التالية:
+                <br>• ic_launcher_mdpi.png → android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+                <br>• ic_launcher_hdpi.png → android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+                <br>• ic_launcher_xhdpi.png → android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+                <br>• ic_launcher_xxhdpi.png → android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+                <br>• ic_launcher_xxxhdpi.png → android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+            </div>
+            <div class="step">
+                <strong>3.</strong> شغّل الأمر: <code>flutter build apk --release --no-shrink</code>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const sizes = [
+            {size: 48, name: 'mdpi', label: '48×48 (MDPI)'},
+            {size: 72, name: 'hdpi', label: '72×72 (HDPI)'},
+            {size: 96, name: 'xhdpi', label: '96×96 (XHDPI)'},
+            {size: 144, name: 'xxhdpi', label: '144×144 (XXHDPI)'},
+            {size: 192, name: 'xxxhdpi', label: '192×192 (XXXHDPI)'}
+        ];
+        
+        function createIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // خلفية بيضاء مع تدرج خفيف
+            const gradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(1, '#f8f9fa');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // دائرة خلفية مع ظل
+            ctx.shadowColor = 'rgba(0,0,0,0.1)';
+            ctx.shadowBlur = size * 0.02;
+            ctx.shadowOffsetY = size * 0.01;
+            
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - size * 0.08, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = '#e9ecef';
+            ctx.lineWidth = size * 0.004;
+            ctx.stroke();
+            
+            // إعادة تعيين الظل
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // النص الرئيسي ES مع تأثير ثلاثي الأبعاد
+            ctx.fillStyle = '#295490';
+            ctx.font = `bold ${size * 0.32}px 'Segoe UI', Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // ظل للنص
+            ctx.shadowColor = 'rgba(41, 84, 144, 0.3)';
+            ctx.shadowBlur = size * 0.01;
+            ctx.shadowOffsetY = size * 0.008;
+            
+            ctx.fillText('ES', size/2, size/2 - size * 0.06);
+            
+            // إعادة تعيين الظل
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // النص الفرعي
+            if (size >= 96) { // إظهار النص الفرعي فقط في الأحجام الكبيرة
+                ctx.fillStyle = '#6c757d';
+                ctx.font = `${size * 0.07}px 'Segoe UI', Arial, sans-serif`;
+                ctx.fillText('United Saudi', size/2, size/2 + size * 0.22);
+            }
+            
+            // خط تحت النص الرئيسي
+            ctx.strokeStyle = '#295490';
+            ctx.lineWidth = size * 0.006;
+            ctx.beginPath();
+            ctx.moveTo(size * 0.32, size/2 + size * 0.06);
+            ctx.lineTo(size * 0.68, size/2 + size * 0.06);
+            ctx.stroke();
+            
+            // إضافة لمعة خفيفة
+            const highlight = ctx.createRadialGradient(
+                size * 0.35, size * 0.35, 0,
+                size * 0.35, size * 0.35, size * 0.3
+            );
+            highlight.addColorStop(0, 'rgba(255,255,255,0.4)');
+            highlight.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = highlight;
+            ctx.fillRect(0, 0, size, size);
+            
+            return canvas;
+        }
+        
+        function downloadIcon(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        }
+        
+        function downloadAll() {
+            let count = 0;
+            const total = sizes.length;
+            
+            sizes.forEach(({size, name}, index) => {
+                setTimeout(() => {
+                    const canvas = createIcon(size);
+                    downloadIcon(canvas, `ic_launcher_${name}.png`);
+                    count++;
+                    
+                    if (count === total) {
+                        setTimeout(() => {
+                            alert(`✅ تم تحميل ${total} أيقونات بنجاح!\n\nالآن انسخ الملفات إلى مجلدات Android المناسبة وأعد بناء التطبيق.`);
+                        }, 500);
+                    }
+                }, index * 200); // تأخير صغير بين التحميلات
+            });
+        }
+        
+        function createZip() {
+            alert('💡 نصيحة: حمّل الأيقونات واحدة تلو الأخرى باستخدام زر "تحميل جميع الأيقونات" أعلاه.');
+        }
+        
+        // إنشاء المعاينات
+        window.onload = function() {
+            const container = document.getElementById('canvases');
+            
+            sizes.forEach(({size, name, label}) => {
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'inline-block';
+                wrapper.style.margin = '10px';
+                wrapper.style.textAlign = 'center';
+                
+                const canvas = createIcon(size);
+                canvas.title = label;
+                canvas.style.display = 'block';
+                
+                const labelDiv = document.createElement('div');
+                labelDiv.textContent = label;
+                labelDiv.className = 'size-label';
+                
+                wrapper.appendChild(canvas);
+                wrapper.appendChild(labelDiv);
+                container.appendChild(wrapper);
+            });
+        };
+    </script>
+</body>
+</html>

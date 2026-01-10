@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء أيقونات PNG</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        canvas { border: 1px solid #ddd; margin: 5px; }
+        .download-btn { background: #295490; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; }
+        .status { margin: 20px 0; padding: 15px; background: #e8f5e8; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 إنشاء أيقونات ES - United Saudi</h1>
+        
+        <div id="status" class="status">
+            جاري إنشاء الأيقونات...
+        </div>
+        
+        <div id="canvases"></div>
+        
+        <button class="download-btn" onclick="downloadAllIcons()">📥 تحميل جميع الأيقونات</button>
+        <button class="download-btn" onclick="copyToClipboard()">📋 نسخ أوامر النسخ</button>
+    </div>
+
+    <script>
+        const sizes = [
+            { size: 48, name: 'mdpi', folder: 'mipmap-mdpi' },
+            { size: 72, name: 'hdpi', folder: 'mipmap-hdpi' },
+            { size: 96, name: 'xhdpi', folder: 'mipmap-xhdpi' },
+            { size: 144, name: 'xxhdpi', folder: 'mipmap-xxhdpi' },
+            { size: 192, name: 'xxxhdpi', folder: 'mipmap-xxxhdpi' }
+        ];
+
+        let canvases = {};
+
+        function createIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // خلفية بيضاء
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+
+            // دائرة خلفية
+            const margin = size * 0.08;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - margin, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = '#e9ecef';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // النص الرئيسي ES
+            ctx.fillStyle = '#295490';
+            ctx.font = `bold ${size * 0.32}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ES', size/2, size/2 - size * 0.06);
+
+            // النص الفرعي للأحجام الكبيرة
+            if (size >= 96) {
+                ctx.fillStyle = '#6c757d';
+                ctx.font = `${size * 0.07}px Arial, sans-serif`;
+                ctx.fillText('United Saudi', size/2, size/2 + size * 0.22);
+            }
+
+            // خط تحت النص الرئيسي
+            ctx.strokeStyle = '#295490';
+            ctx.lineWidth = Math.max(1, size * 0.006);
+            ctx.beginPath();
+            ctx.moveTo(size * 0.32, size/2 + size * 0.06);
+            ctx.lineTo(size * 0.68, size/2 + size * 0.06);
+            ctx.stroke();
+
+            return canvas;
+        }
+
+        function downloadIcon(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadAllIcons() {
+            sizes.forEach(({ size, name }, index) => {
+                setTimeout(() => {
+                    const canvas = canvases[name];
+                    downloadIcon(canvas, `ic_launcher_${name}.png`);
+                }, index * 200);
+            });
+            
+            document.getElementById('status').innerHTML = `
+                ✅ تم تحميل ${sizes.length} أيقونات!<br>
+                📁 انسخ الملفات إلى مجلدات Android المناسبة
+            `;
+        }
+
+        function copyToClipboard() {
+            const commands = sizes.map(({ name, folder }) => 
+                `copy ic_launcher_${name}.png android\\app\\src\\main\\res\\${folder}\\ic_launcher.png`
+            ).join('\n');
+            
+            navigator.clipboard.writeText(commands).then(() => {
+                alert('تم نسخ أوامر النسخ إلى الحافظة!');
+            });
+        }
+
+        // إنشاء الأيقونات عند تحميل الصفحة
+        window.onload = function() {
+            const container = document.getElementById('canvases');
+            
+            sizes.forEach(({ size, name, folder }) => {
+                const canvas = createIcon(size);
+                canvas.title = `${size}x${size} (${name})`;
+                canvases[name] = canvas;
+                
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'inline-block';
+                wrapper.style.margin = '10px';
+                wrapper.style.textAlign = 'center';
+                
+                const label = document.createElement('div');
+                label.textContent = `${size}x${size} (${name})`;
+                label.style.fontSize = '12px';
+                label.style.marginTop = '5px';
+                
+                wrapper.appendChild(canvas);
+                wrapper.appendChild(label);
+                container.appendChild(wrapper);
+            });
+            
+            document.getElementById('status').innerHTML = `
+                ✅ تم إنشاء ${sizes.length} أيقونات بنجاح!<br>
+                📥 اضغط على "تحميل جميع الأيقونات" أدناه
+            `;
+        };
+    </script>
+</body>
+</html>

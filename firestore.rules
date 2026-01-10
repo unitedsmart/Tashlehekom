@@ -1,0 +1,193 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // قواعد المستخدمين
+    match /users/{userId} {
+      // السماح بالقراءة للمستخدم نفسه أو الإداريين
+      allow read: if request.auth != null && 
+        (request.auth.uid == userId || 
+         isAdmin(request.auth.uid) || 
+         isSuperAdmin(request.auth.uid));
+      
+      // السماح بالكتابة للمستخدم نفسه أو الإداريين
+      allow write: if request.auth != null && 
+        (request.auth.uid == userId || 
+         isAdmin(request.auth.uid) || 
+         isSuperAdmin(request.auth.uid)) &&
+        isValidUserData(request.resource.data);
+      
+      // السماح بالحذف للإداريين فقط
+      allow delete: if request.auth != null && 
+        (isAdmin(request.auth.uid) || isSuperAdmin(request.auth.uid));
+    }
+    
+    // قواعد السيارات
+    match /cars/{carId} {
+      // السماح بالقراءة للجميع للسيارات النشطة (بدون تسجيل دخول)
+      allow read: if resource.data.isActive == true ||
+        (request.auth != null &&
+         (request.auth.uid == resource.data.sellerId ||
+          isAdmin(request.auth.uid) ||
+          isSuperAdmin(request.auth.uid)));
+      
+      // السماح بالإنشاء للبائعين والإداريين
+      allow create: if request.auth != null && 
+        (isSeller(request.auth.uid) || 
+         isJunkyardOwner(request.auth.uid) ||
+         isAdmin(request.auth.uid) ||
+         isSuperAdmin(request.auth.uid)) &&
+        isValidCarData(request.resource.data) &&
+        request.resource.data.sellerId == request.auth.uid;
+      
+      // السماح بالتحديث لصاحب السيارة أو الإداريين
+      allow update: if request.auth != null && 
+        (request.auth.uid == resource.data.sellerId ||
+         isAdmin(request.auth.uid) ||
+         isSuperAdmin(request.auth.uid)) &&
+        isValidCarData(request.resource.data);
+      
+      // السماح بالحذف للإداريين فقط
+      allow delete: if request.auth != null && 
+        (isAdmin(request.auth.uid) || isSuperAdmin(request.auth.uid));
+    }
+    
+    // قواعد المفضلة
+    match /favorites/{favoriteId} {
+      // السماح بالقراءة والكتابة للمستخدم نفسه فقط
+      allow read, write: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+      
+      // السماح بالإنشاء إذا كان المستخدم هو نفسه
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.userId;
+    }
+    
+    // قواعد التقييمات
+    match /ratings/{ratingId} {
+      // السماح بالقراءة للجميع
+      allow read: if request.auth != null;
+      
+      // السماح بالكتابة للمستخدم نفسه فقط
+      allow write: if request.auth != null && 
+        request.auth.uid == request.resource.data.userId &&
+        isValidRatingData(request.resource.data);
+      
+      // منع تعديل التقييمات القديمة (أكثر من 24 ساعة)
+      allow update: if request.auth != null && 
+        request.auth.uid == resource.data.userId &&
+        resource.data.createdAt.toMillis() > (request.time.toMillis() - 86400000);
+    }
+    
+    // قواعد البلاغات
+    match /reports/{reportId} {
+      // السماح بالقراءة للإداريين فقط
+      allow read: if request.auth != null && 
+        (isAdmin(request.auth.uid) || isSuperAdmin(request.auth.uid));
+      
+      // السماح بالإنشاء للمستخدمين المسجلين
+      allow create: if request.auth != null && 
+        request.resource.data.reporterId == request.auth.uid &&
+        isValidReportData(request.resource.data);
+      
+      // السماح بالتحديث للإداريين فقط
+      allow update: if request.auth != null && 
+        (isAdmin(request.auth.uid) || isSuperAdmin(request.auth.uid));
+    }
+    
+    // قواعد الإشعارات
+    match /notifications/{notificationId} {
+      // السماح بالقراءة للمستخدم المستهدف فقط
+      allow read: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+      
+      // السماح بالكتابة للإداريين والنظام
+      allow write: if request.auth != null && 
+        (isAdmin(request.auth.uid) || 
+         isSuperAdmin(request.auth.uid) ||
+         request.resource.data.userId == request.auth.uid);
+    }
+    
+    // قواعد سجلات الأمان
+    match /security_logs/{logId} {
+      // السماح بالقراءة للإداريين فقط
+      allow read: if request.auth != null && 
+        (isAdmin(request.auth.uid) || isSuperAdmin(request.auth.uid));
+      
+      // السماح بالكتابة للنظام والإداريين
+      allow create: if request.auth != null;
+      
+      // منع التعديل والحذف
+      allow update, delete: if false;
+    }
+    
+    // دوال مساعدة للتحقق من أنواع المستخدمين
+    function isAdmin(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId)) &&
+        get(/databases/$(database)/documents/users/$(userId)).data.userType == 'admin';
+    }
+    
+    function isSuperAdmin(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId)) &&
+        get(/databases/$(database)/documents/users/$(userId)).data.userType == 'superAdmin';
+    }
+    
+    function isSeller(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId)) &&
+        get(/databases/$(database)/documents/users/$(userId)).data.userType == 'seller';
+    }
+    
+    function isJunkyardOwner(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId)) &&
+        get(/databases/$(database)/documents/users/$(userId)).data.userType == 'junkyardOwner';
+    }
+    
+    // دوال التحقق من صحة البيانات
+    function isValidUserData(data) {
+      return data.keys().hasAll(['username', 'phoneNumber', 'userType', 'isActive']) &&
+        data.username is string &&
+        data.username.size() > 0 &&
+        data.username.size() <= 50 &&
+        data.phoneNumber is string &&
+        data.phoneNumber.matches('^(\\+9665|9665|05|5)[0-9]{8}$') &&
+        data.userType in ['user', 'seller', 'admin', 'individual', 'worker', 'junkyardOwner', 'superAdmin'] &&
+        data.isActive is bool;
+    }
+    
+    function isValidCarData(data) {
+      return data.keys().hasAll(['brand', 'model', 'manufacturingYears', 'city', 'sellerId', 'isActive']) &&
+        data.brand is string &&
+        data.brand.size() > 0 &&
+        data.brand.size() <= 50 &&
+        data.model is string &&
+        data.model.size() > 0 &&
+        data.model.size() <= 50 &&
+        data.manufacturingYears is list &&
+        data.manufacturingYears.size() > 0 &&
+        data.city is string &&
+        data.city.size() > 0 &&
+        data.sellerId is string &&
+        data.isActive is bool;
+    }
+    
+    function isValidRatingData(data) {
+      return data.keys().hasAll(['rating', 'userId', 'sellerId']) &&
+        data.rating is number &&
+        data.rating >= 1 &&
+        data.rating <= 5 &&
+        data.userId is string &&
+        data.sellerId is string &&
+        data.userId != data.sellerId;
+    }
+    
+    function isValidReportData(data) {
+      return data.keys().hasAll(['type', 'targetId', 'reporterId', 'reason']) &&
+        data.type in ['user', 'car', 'inappropriate_content', 'spam', 'fraud'] &&
+        data.targetId is string &&
+        data.reporterId is string &&
+        data.reason is string &&
+        data.reason.size() > 0 &&
+        data.reason.size() <= 500;
+    }
+  }
+}

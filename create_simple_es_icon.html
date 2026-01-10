@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء أيقونة ES</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { background: #295490; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🎨 أيقونة ES - United Saudi</h1>
+    
+    <div id="canvases"></div>
+    
+    <button onclick="downloadAll()">تحميل جميع الأحجام</button>
+    
+    <script>
+        const sizes = [
+            {size: 48, name: 'mdpi'},
+            {size: 72, name: 'hdpi'},
+            {size: 96, name: 'xhdpi'},
+            {size: 144, name: 'xxhdpi'},
+            {size: 192, name: 'xxxhdpi'},
+            {size: 512, name: 'main'}
+        ];
+        
+        function createIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // خلفية بيضاء
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            
+            // دائرة خلفية
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 4, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // النص ES
+            ctx.fillStyle = '#295490';
+            ctx.font = `bold ${size * 0.35}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ES', size/2, size/2 - size * 0.05);
+            
+            // النص الصغير
+            ctx.fillStyle = '#666666';
+            ctx.font = `${size * 0.08}px Arial`;
+            ctx.fillText('United Saudi', size/2, size/2 + size * 0.25);
+            
+            return canvas;
+        }
+        
+        function downloadIcon(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        function downloadAll() {
+            sizes.forEach(({size, name}) => {
+                const canvas = createIcon(size);
+                downloadIcon(canvas, `ic_launcher_${name}.png`);
+            });
+        }
+        
+        // إنشاء المعاينات
+        window.onload = function() {
+            const container = document.getElementById('canvases');
+            sizes.forEach(({size, name}) => {
+                const canvas = createIcon(size);
+                canvas.title = `${size}x${size} (${name})`;
+                container.appendChild(canvas);
+            });
+        };
+    </script>
+</body>
+</html>

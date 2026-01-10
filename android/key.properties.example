@@ -1,0 +1,32 @@
+# ملف إعدادات التوقيع لتطبيق تشليحكم
+# Signing configuration for Tashlehekomv2 app
+
+# كلمة مرور keystore
+storePassword=TashlehekomSecure2024
+
+# كلمة مرور المفتاح
+keyPassword=TashlehekomSecure2024
+
+# اسم المفتاح (alias)
+keyAlias=tashlehekomv2-key
+
+# مسار ملف keystore
+storeFile=keystore/tashlehekomv2-release-key.jks
+
+# ملاحظات مهمة:
+# 1. انسخ هذا الملف إلى android/key.properties
+# 2. استبدل كلمات المرور بكلمات مرور قوية وآمنة
+# 3. تأكد من إنشاء keystore باستخدام نفس المعلومات
+# 4. احتفظ بنسخ احتياطية من keystore وكلمات المرور
+# 5. لا تشارك هذا الملف في نظام التحكم بالإصدارات (git)
+
+# أمر إنشاء keystore:
+# keytool -genkey -v -keystore android/keystore/tashlehekomv2-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias tashlehekomv2-key
+
+# معلومات الشهادة المقترحة:
+# الاسم: Tashlehekomv2 Tech
+# الوحدة التنظيمية: Development Team  
+# المنظمة: Tashlehekomv2 Company
+# المدينة: Riyadh
+# الولاية: Riyadh Province
+# البلد: SA

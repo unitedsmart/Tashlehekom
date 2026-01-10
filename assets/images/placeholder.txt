@@ -1,0 +1,8 @@
+# Assets Images Directory
+
+This directory should contain:
+- logo.png (App logo)
+- header_banner.jpg (Header banner image)
+- placeholder_car.png (Placeholder car image)
+
+For now, these are placeholder files that should be replaced with actual images.

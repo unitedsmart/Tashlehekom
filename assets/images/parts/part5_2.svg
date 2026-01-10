@@ -1,0 +1,35 @@
+
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="partGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="#f8f8f8"/>
+    
+    <!-- Part Shape (Generic) -->
+    <rect x="100" y="100" width="200" height="100" fill="url(#partGradient)" stroke="#333" stroke-width="2" rx="10"/>
+    
+    <!-- Details -->
+    <circle cx="150" cy="150" r="20" fill="#666" stroke="#333" stroke-width="2"/>
+    <circle cx="250" cy="150" r="20" fill="#666" stroke="#333" stroke-width="2"/>
+    
+    <!-- Bolts -->
+    <circle cx="120" cy="120" r="5" fill="#333"/>
+    <circle cx="280" cy="120" r="5" fill="#333"/>
+    <circle cx="120" cy="180" r="5" fill="#333"/>
+    <circle cx="280" cy="180" r="5" fill="#333"/>
+    
+    <!-- Part Name -->
+    <text x="200" y="50" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#333">كمبروسر مكيف - تفاصيل</text>
+    
+    <!-- Part Number -->
+    <text x="200" y="250" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">قطعة أصلية</text>
+    
+    <!-- Quality Badge -->
+    <circle cx="350" cy="50" r="30" fill="#FF9800" stroke="#F57C00" stroke-width="2"/>
+    <text x="350" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">A+</text>
+</svg>

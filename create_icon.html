@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء أيقونة السيارة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            margin: 20px;
+            background: white;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚗 إنشاء أيقونة تطبيق تشليحكم</h1>
+    
+    <canvas id="mainIcon" width="1024" height="1024"></canvas>
+    <canvas id="foregroundIcon" width="1024" height="1024"></canvas>
+    
+    <br>
+    <button onclick="createIcons()">إنشاء الأيقونات</button>
+    <button onclick="downloadMainIcon()">تحميل الأيقونة الرئيسية</button>
+    <button onclick="downloadForegroundIcon()">تحميل أيقونة المقدمة</button>
+    
+    <script>
+        function drawCar(ctx, scale = 1, offsetX = 0, offsetY = 0) {
+            const centerX = 512 + offsetX;
+            const centerY = 512 + offsetY;
+            
+            // ألوان التصميم
+            const carColor = '#2E7D32';      // أخضر داكن
+            const wheelColor = '#424242';    // رمادي داكن
+            const windowColor = '#81C784';   // أخضر فاتح
+            const lightColor = '#FFF59D';    // أصفر فاتح
+            const redLight = '#F44336';      // أحمر للأضواء الخلفية
+            
+            // حساب المقاييس
+            const carWidth = 600 * scale;
+            const carHeight = 200 * scale;
+            const carLeft = centerX - carWidth / 2;
+            const carRight = centerX + carWidth / 2;
+            const carTop = centerY - carHeight / 2;
+            const carBottom = centerY + carHeight / 2;
+            
+            // رسم جسم السيارة الرئيسي
+            ctx.fillStyle = carColor;
+            ctx.beginPath();
+            ctx.roundRect(carLeft, carTop, carWidth, carHeight, 30 * scale);
+            ctx.fill();
+            
+            // رسم مقدمة السيارة
+            const hoodWidth = 120 * scale;
+            ctx.beginPath();
+            ctx.roundRect(carRight - 20 * scale, carTop + 20 * scale, hoodWidth, carHeight - 40 * scale, 25 * scale);
+            ctx.fill();
+            
+            // رسم النوافذ
+            ctx.fillStyle = windowColor;
+            const windowMargin = 30 * scale;
+            const windowWidth = 100 * scale;
+            const windowHeight = carHeight - 2 * windowMargin;
+            
+            // النافذة الأمامية
+            ctx.beginPath();
+            ctx.roundRect(carLeft + windowMargin, carTop + windowMargin, windowWidth, windowHeight, 15 * scale);
+            ctx.fill();
+            
+            // النافذة الخلفية
+            ctx.beginPath();
+            ctx.roundRect(carRight - windowMargin - windowWidth - 60 * scale, carTop + windowMargin, windowWidth, windowHeight, 15 * scale);
+            ctx.fill();
+            
+            // رسم العجلات
+            const wheelRadius = 50 * scale;
+            const wheelY = carBottom + 30 * scale;
+            
+            // العجلة الأمامية
+            const frontWheelX = carLeft + 100 * scale;
+            ctx.fillStyle = wheelColor;
+            ctx.beginPath();
+            ctx.arc(frontWheelX, wheelY, wheelRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // مركز العجلة الأمامية
+            ctx.fillStyle = '#616161';
+            ctx.beginPath();
+            ctx.arc(frontWheelX, wheelY, wheelRadius * 0.6, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // العجلة الخلفية
+            const rearWheelX = carRight - 100 * scale;
+            ctx.fillStyle = wheelColor;
+            ctx.beginPath();
+            ctx.arc(rearWheelX, wheelY, wheelRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // مركز العجلة الخلفية
+            ctx.fillStyle = '#616161';
+            ctx.beginPath();
+            ctx.arc(rearWheelX, wheelY, wheelRadius * 0.6, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // رسم الأضواء الأمامية
+            const lightRadius = 20 * scale;
+            const lightX = carRight + hoodWidth - 10 * scale;
+            
+            ctx.fillStyle = lightColor;
+            // الضوء الأمامي العلوي
+            ctx.beginPath();
+            ctx.arc(lightX, centerY - 30 * scale, lightRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // الضوء الأمامي السفلي
+            ctx.beginPath();
+            ctx.arc(lightX, centerY + 30 * scale, lightRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // رسم الأضواء الخلفية
+            ctx.fillStyle = redLight;
+            const rearLightX = carLeft - 10 * scale;
+            const rearLightRadius = 15 * scale;
+            
+            // الضوء الخلفي العلوي
+            ctx.beginPath();
+            ctx.arc(rearLightX, centerY - 30 * scale, rearLightRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // الضوء الخلفي السفلي
+            ctx.beginPath();
+            ctx.arc(rearLightX, centerY + 30 * scale, rearLightRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // إضافة تفاصيل
+            // مقابض الأبواب
+            ctx.fillStyle = '#1B5E20';
+            ctx.fillRect(carLeft + 150 * scale, centerY - 5 * scale, 30 * scale, 10 * scale);
+            ctx.fillRect(carRight - 200 * scale, centerY - 5 * scale, 30 * scale, 10 * scale);
+            
+            // خطوط جانبية
+            ctx.strokeStyle = '#1B5E20';
+            ctx.lineWidth = 3 * scale;
+            ctx.beginPath();
+            ctx.moveTo(carLeft + 20 * scale, centerY - 20 * scale);
+            ctx.lineTo(carRight - 80 * scale, centerY - 20 * scale);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(carLeft + 20 * scale, centerY + 20 * scale);
+            ctx.lineTo(carRight - 80 * scale, centerY + 20 * scale);
+            ctx.stroke();
+        }
+        
+        function createIcons() {
+            // إنشاء الأيقونة الرئيسية
+            const mainCanvas = document.getElementById('mainIcon');
+            const mainCtx = mainCanvas.getContext('2d');
+            
+            // مسح الكانفاس
+            mainCtx.clearRect(0, 0, 1024, 1024);
+            
+            // رسم خلفية دائرية
+            mainCtx.fillStyle = '#4CAF50';
+            mainCtx.beginPath();
+            mainCtx.arc(512, 512, 480, 0, 2 * Math.PI);
+            mainCtx.fill();
+            
+            // رسم السيارة
+            drawCar(mainCtx, 1, 0, 0);
+            
+            // إنشاء أيقونة المقدمة
+            const foregroundCanvas = document.getElementById('foregroundIcon');
+            const foregroundCtx = foregroundCanvas.getContext('2d');
+            
+            // مسح الكانفاس
+            foregroundCtx.clearRect(0, 0, 1024, 1024);
+            
+            // رسم السيارة بحجم أصغر للمقدمة
+            drawCar(foregroundCtx, 0.7, 0, 0);
+            
+            alert('✅ تم إنشاء الأيقونات بنجاح! يمكنك الآن تحميلها.');
+        }
+        
+        function downloadMainIcon() {
+            const canvas = document.getElementById('mainIcon');
+            const link = document.createElement('a');
+            link.download = 'app_icon.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        function downloadForegroundIcon() {
+            const canvas = document.getElementById('foregroundIcon');
+            const link = document.createElement('a');
+            link.download = 'app_icon_foreground.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // إنشاء الأيقونات تلقائياً عند تحميل الصفحة
+        window.onload = function() {
+            createIcons();
+        };
+    </script>
+</body>
+</html>

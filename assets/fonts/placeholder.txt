@@ -1,0 +1,8 @@
+# Assets Fonts Directory
+
+This directory should contain Cairo font files:
+- Cairo-Regular.ttf
+- Cairo-Bold.ttf
+
+You can download these fonts from Google Fonts:
+https://fonts.google.com/specimen/Cairo

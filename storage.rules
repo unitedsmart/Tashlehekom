@@ -1,0 +1,71 @@
+// Firebase Storage Security Rules لتطبيق تشليحكم
+// هذه القواعد تسمح برفع وتحميل الصور بشكل آمن
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // قواعد صور السيارات
+    match /cars/{carId}/{allPaths=**} {
+      // السماح بالقراءة للجميع (عرض الصور)
+      allow read: if true;
+      
+      // السماح بالكتابة للمستخدمين المسجلين فقط
+      allow write: if request.auth != null
+        && isValidCarImage()
+        && isFileSizeValid();
+    }
+    
+    // قواعد الصور الشخصية للمستخدمين
+    match /users/{userId}/{allPaths=**} {
+      // السماح بالقراءة للجميع
+      allow read: if true;
+      
+      // السماح بالكتابة للمستخدم نفسه فقط
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && isValidProfileImage()
+        && isFileSizeValid();
+    }
+    
+    // قواعد مرفقات البلاغات
+    match /reports/{reportId}/{allPaths=**} {
+      // السماح بالقراءة للمستخدمين المسجلين فقط
+      allow read: if request.auth != null;
+      
+      // السماح بالكتابة للمستخدمين المسجلين فقط
+      allow write: if request.auth != null
+        && isValidReportAttachment()
+        && isFileSizeValid();
+    }
+    
+    // دالة للتحقق من صحة صور السيارات
+    function isValidCarImage() {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.contentType in ['image/jpeg', 'image/png', 'image/webp'];
+    }
+    
+    // دالة للتحقق من صحة الصور الشخصية
+    function isValidProfileImage() {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.contentType in ['image/jpeg', 'image/png'];
+    }
+    
+    // دالة للتحقق من صحة مرفقات البلاغات
+    function isValidReportAttachment() {
+      return request.resource.contentType in [
+        'image/jpeg', 'image/png', 'image/webp',
+        'application/pdf', 'text/plain',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+    }
+    
+    // دالة للتحقق من حجم الملف
+    function isFileSizeValid() {
+      // الحد الأقصى: 10MB للصور، 20MB للملفات الأخرى
+      return (request.resource.contentType.matches('image/.*') && request.resource.size <= 10 * 1024 * 1024)
+        || (!request.resource.contentType.matches('image/.*') && request.resource.size <= 20 * 1024 * 1024);
+    }
+  }
+}

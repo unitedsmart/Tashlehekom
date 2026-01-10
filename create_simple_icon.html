@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء أيقونة سيارة بسيطة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            margin: 20px;
+            background: white;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .preview {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .preview canvas {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚗 إنشاء أيقونة تطبيق تشليحكم</h1>
+    
+    <div class="preview">
+        <h3>الأيقونة الرئيسية</h3>
+        <canvas id="mainIcon" width="1024" height="1024"></canvas>
+        <br>
+        <button onclick="downloadIcon('mainIcon', 'car_app_icon.png')">تحميل الأيقونة الرئيسية</button>
+    </div>
+    
+    <div class="preview">
+        <h3>أيقونة المقدمة</h3>
+        <canvas id="foregroundIcon" width="1024" height="1024"></canvas>
+        <br>
+        <button onclick="downloadIcon('foregroundIcon', 'car_icon_foreground.png')">تحميل أيقونة المقدمة</button>
+    </div>
+    
+    <br><br>
+    <button onclick="createAllIcons()" style="font-size: 18px; padding: 15px 30px;">🎨 إنشاء جميع الأيقونات</button>
+    
+    <script>
+        function createMainIcon() {
+            const canvas = document.getElementById('mainIcon');
+            const ctx = canvas.getContext('2d');
+            const size = 1024;
+            
+            // مسح الكانفاس
+            ctx.clearRect(0, 0, size, size);
+            
+            // رسم خلفية دائرية خضراء
+            const gradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            gradient.addColorStop(0, '#66BB6A');
+            gradient.addColorStop(1, '#4CAF50');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 20, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // رسم حدود بيضاء
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            
+            // رسم أيقونة السيارة
+            drawCarIcon(ctx, size/2, size/2, 1.0, 'white');
+            
+            // إضافة نص تشليحكم
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 60px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('تشليحكم', size/2, size - 80);
+        }
+        
+        function createForegroundIcon() {
+            const canvas = document.getElementById('foregroundIcon');
+            const ctx = canvas.getContext('2d');
+            const size = 1024;
+            
+            // مسح الكانفاس (خلفية شفافة)
+            ctx.clearRect(0, 0, size, size);
+            
+            // رسم أيقونة السيارة فقط
+            drawCarIcon(ctx, size/2, size/2, 0.8, '#2E7D32');
+        }
+        
+        function drawCarIcon(ctx, centerX, centerY, scale, color) {
+            const size = 300 * scale;
+            
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.scale(scale, scale);
+            
+            // رسم جسم السيارة
+            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 8;
+            
+            // الجسم الرئيسي
+            ctx.beginPath();
+            ctx.roundRect(-150, -60, 300, 120, 20);
+            ctx.fill();
+            
+            // المقدمة
+            ctx.beginPath();
+            ctx.roundRect(120, -40, 60, 80, 15);
+            ctx.fill();
+            
+            // النوافذ (لون أفتح)
+            const windowColor = color === 'white' ? 'rgba(255,255,255,0.8)' : '#81C784';
+            ctx.fillStyle = windowColor;
+            
+            // النافذة الأمامية
+            ctx.beginPath();
+            ctx.roundRect(-130, -40, 60, 80, 10);
+            ctx.fill();
+            
+            // النافذة الخلفية
+            ctx.beginPath();
+            ctx.roundRect(40, -40, 60, 80, 10);
+            ctx.fill();
+            
+            // العجلات
+            const wheelColor = color === 'white' ? 'rgba(255,255,255,0.9)' : '#424242';
+            ctx.fillStyle = wheelColor;
+            
+            // العجلة الأمامية
+            ctx.beginPath();
+            ctx.arc(-80, 80, 35, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // العجلة الخلفية
+            ctx.beginPath();
+            ctx.arc(80, 80, 35, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // مراكز العجلات
+            ctx.fillStyle = color === 'white' ? 'rgba(255,255,255,0.7)' : '#616161';
+            ctx.beginPath();
+            ctx.arc(-80, 80, 20, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(80, 80, 20, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // الأضواء الأمامية
+            const lightColor = color === 'white' ? '#FFF59D' : '#FFF59D';
+            ctx.fillStyle = lightColor;
+            
+            ctx.beginPath();
+            ctx.arc(170, -25, 12, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(170, 25, 12, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // الأضواء الخلفية
+            const rearLightColor = '#F44336';
+            ctx.fillStyle = rearLightColor;
+            
+            ctx.beginPath();
+            ctx.arc(-170, -20, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(-170, 20, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // تفاصيل إضافية
+            ctx.strokeStyle = color === 'white' ? 'rgba(255,255,255,0.6)' : '#1B5E20';
+            ctx.lineWidth = 3;
+            
+            // خط جانبي علوي
+            ctx.beginPath();
+            ctx.moveTo(-120, -20);
+            ctx.lineTo(100, -20);
+            ctx.stroke();
+            
+            // خط جانبي سفلي
+            ctx.beginPath();
+            ctx.moveTo(-120, 20);
+            ctx.lineTo(100, 20);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
+        function createAllIcons() {
+            createMainIcon();
+            createForegroundIcon();
+            alert('✅ تم إنشاء جميع الأيقونات بنجاح!\n\nيمكنك الآن تحميل الأيقونات باستخدام الأزرار أدناه.');
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // إنشاء الأيقونات تلقائياً عند تحميل الصفحة
+        window.onload = function() {
+            createAllIcons();
+        };
+    </script>
+</body>
+</html>

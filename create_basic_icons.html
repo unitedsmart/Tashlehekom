@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء أيقونات أساسية</title>
+    <style>
+        body { font-family: Arial; padding: 20px; text-align: center; }
+        canvas { border: 1px solid #ccc; margin: 5px; }
+        button { background: #295490; color: white; border: none; padding: 10px 20px; margin: 10px; cursor: pointer; border-radius: 5px; }
+        .status { background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎨 إنشاء أيقونات أساسية للتطبيق</h1>
+    
+    <div class="status" id="status">
+        جاري إنشاء الأيقونات...
+    </div>
+    
+    <div id="canvases"></div>
+    
+    <button onclick="downloadAllIcons()">📥 تحميل جميع الأيقونات</button>
+    <button onclick="copyInstructions()">📋 نسخ تعليمات التثبيت</button>
+    
+    <script>
+        const sizes = [
+            { size: 48, name: 'mdpi' },
+            { size: 72, name: 'hdpi' },
+            { size: 96, name: 'xhdpi' },
+            { size: 144, name: 'xxhdpi' },
+            { size: 192, name: 'xxxhdpi' }
+        ];
+        
+        let canvases = {};
+        
+        function createBasicIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // خلفية بيضاء
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            
+            // دائرة خلفية خفيفة
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 4, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fill();
+            ctx.strokeStyle = '#dee2e6';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // النص ES
+            ctx.fillStyle = '#295490';
+            ctx.font = `bold ${size * 0.3}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ES', size/2, size/2);
+            
+            // خط تحت النص
+            ctx.strokeStyle = '#295490';
+            ctx.lineWidth = Math.max(1, size * 0.02);
+            ctx.beginPath();
+            ctx.moveTo(size * 0.3, size/2 + size * 0.15);
+            ctx.lineTo(size * 0.7, size/2 + size * 0.15);
+            ctx.stroke();
+            
+            return canvas;
+        }
+        
+        function downloadIcon(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function downloadAllIcons() {
+            let downloaded = 0;
+            sizes.forEach(({ size, name }, index) => {
+                setTimeout(() => {
+                    const canvas = canvases[name];
+                    downloadIcon(canvas, `ic_launcher_${name}.png`);
+                    downloaded++;
+                    
+                    if (downloaded === sizes.length) {
+                        document.getElementById('status').innerHTML = `
+                            ✅ تم تحميل ${sizes.length} أيقونات!<br>
+                            📁 انسخ الملفات إلى مجلدات Android
+                        `;
+                    }
+                }, index * 300);
+            });
+        }
+        
+        function copyInstructions() {
+            const instructions = `
+تعليمات تثبيت الأيقونات:
+
+1. انسخ الملفات إلى المجلدات التالية:
+   ic_launcher_mdpi.png → android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+   ic_launcher_hdpi.png → android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+   ic_launcher_xhdpi.png → android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+   ic_launcher_xxhdpi.png → android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+   ic_launcher_xxxhdpi.png → android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
+2. شغّل الأمر:
+   flutter build apk --release --no-shrink
+            `.trim();
+            
+            navigator.clipboard.writeText(instructions).then(() => {
+                alert('تم نسخ التعليمات إلى الحافظة!');
+            });
+        }
+        
+        // إنشاء الأيقونات عند تحميل الصفحة
+        window.onload = function() {
+            const container = document.getElementById('canvases');
+            
+            sizes.forEach(({ size, name }) => {
+                const canvas = createBasicIcon(size);
+                canvas.title = `${size}x${size} (${name})`;
+                canvases[name] = canvas;
+                
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'inline-block';
+                wrapper.style.margin = '10px';
+                wrapper.style.textAlign = 'center';
+                
+                const label = document.createElement('div');
+                label.textContent = `${size}x${size}`;
+                label.style.fontSize = '12px';
+                label.style.marginTop = '5px';
+                
+                wrapper.appendChild(canvas);
+                wrapper.appendChild(label);
+                container.appendChild(wrapper);
+            });
+            
+            document.getElementById('status').innerHTML = `
+                ✅ تم إنشاء ${sizes.length} أيقونات أساسية!<br>
+                📥 اضغط "تحميل جميع الأيقونات" أدناه
+            `;
+        };
+    </script>
+</body>
+</html>

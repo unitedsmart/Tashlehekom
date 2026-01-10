@@ -1,0 +1,38 @@
+
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#333333;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="#f0f0f0"/>
+    
+    <!-- Car Body -->
+    <ellipse cx="200" cy="180" rx="150" ry="60" fill="url(#carGradient)" stroke="#333" stroke-width="2"/>
+    
+    <!-- Car Top -->
+    <ellipse cx="200" cy="140" rx="100" ry="40" fill="url(#carGradient)" stroke="#333" stroke-width="2"/>
+    
+    <!-- Wheels -->
+    <circle cx="120" cy="220" r="25" fill="#333" stroke="#666" stroke-width="3"/>
+    <circle cx="280" cy="220" r="25" fill="#333" stroke="#666" stroke-width="3"/>
+    <circle cx="120" cy="220" r="15" fill="#888"/>
+    <circle cx="280" cy="220" r="15" fill="#888"/>
+    
+    <!-- Windows -->
+    <ellipse cx="200" cy="140" rx="80" ry="25" fill="#87CEEB" opacity="0.7"/>
+    
+    <!-- Headlights -->
+    <circle cx="70" cy="170" r="12" fill="#FFFF99" stroke="#333" stroke-width="1"/>
+    <circle cx="330" cy="170" r="12" fill="#FFFF99" stroke="#333" stroke-width="1"/>
+    
+    <!-- Car Name -->
+    <text x="200" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">هوندا أكورد 2019 - منظر جانبي</text>
+    
+    <!-- Brand Logo Area -->
+    <rect x="180" y="160" width="40" height="20" fill="#fff" stroke="#333" stroke-width="1" rx="5"/>
+    <text x="200" y="175" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">LOGO</text>
+</svg>
