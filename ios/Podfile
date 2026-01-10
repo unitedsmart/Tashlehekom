@@ -28,15 +28,18 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
+  use_frameworks! :linkage => :static
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  
+
   target 'RunnerTests' do
     inherit! :search_paths
   end
 end
+
+# Force Firebase to use static frameworks to avoid abseil linking issues
+$FirebaseSDKVersion = '11.6.0'
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
@@ -59,10 +62,12 @@ post_install do |installer|
         'PERMISSION_NOTIFICATIONS=1',
       ]
 
-      # Fix Xcode 16 C++ template issue for gRPC-Core
-      if target.name == 'gRPC-Core' || target.name == 'gRPC-C++'
-        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
-        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -Wno-error'
+      # Fix Xcode 16 C++ ABI compatibility for all C++ pods
+      config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+
+      # Fix abseil linking issues
+      if target.name.start_with?('abseil') || target.name.start_with?('gRPC') || target.name == 'leveldb-library'
+        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -std=c++17'
       end
 
       # Fix Xcode 16 toolchain path
