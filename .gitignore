@@ -123,7 +123,7 @@ test_driver/screenshots/
 
 # Firebase
 .firebase/
-firebase_options.dart
+# firebase_options.dart - needed for CI/CD builds
 
 # Environment variables
 .env
