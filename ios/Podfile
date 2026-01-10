@@ -38,8 +38,7 @@ target 'Runner' do
   end
 end
 
-# Force Firebase to use static frameworks to avoid abseil linking issues
-$FirebaseSDKVersion = '11.6.0'
+
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
