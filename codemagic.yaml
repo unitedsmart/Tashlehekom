@@ -5,7 +5,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       flutter: stable
-      xcode: 15.2
+      xcode: latest
       cocoapods: default
     scripts:
       - name: Set up code signing
@@ -21,6 +21,10 @@ workflows:
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
+      - name: Fix Xcode 16 compatibility
+        script: |
+          cd ios
+          find Pods -name "*.xcconfig" -exec sed -i '' 's/DT_TOOLCHAIN_DIR/TOOLCHAIN_DIR/g' {} \;
       - name: Build iOS
         script: |
           flutter build ipa --release --no-codesign
