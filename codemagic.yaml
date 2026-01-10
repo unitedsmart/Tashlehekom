@@ -10,24 +10,19 @@ workflows:
       groups:
         - credentials
     scripts:
-      - name: Set up code signing
-        script: |
-          keychain initialize
-          app-store-connect fetch-signing-files "com.tashlehkom.app" --type IOS_APP_STORE --create
-          keychain add-certificates
-          xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           flutter pub get
       - name: Generate iOS files
         script: |
           flutter precache --ios
-          flutter build ios --config-only
-      - name: Install CocoaPods dependencies
+          cd ios && pod install --repo-update
+      - name: Set up code signing
         script: |
-          cd ios
-          rm -rf Pods Podfile.lock .symlinks
-          pod install --repo-update
+          keychain initialize
+          app-store-connect fetch-signing-files "com.tashlehekomv2.app" --type IOS_APP_STORE --create
+          keychain add-certificates
+          xcode-project use-profiles
       - name: Build iOS
         script: |
           flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
