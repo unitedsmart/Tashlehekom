@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى مكتبة الصور لاختيار صور قطع الغيار والسيارات</string>
+	<key>NSCameraUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى الكاميرا لالتقاط صور قطع الغيار والسيارات</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>يحتاج التطبيق لحفظ الصور في مكتبة الصور</string>
 </dict>
 </plist>
