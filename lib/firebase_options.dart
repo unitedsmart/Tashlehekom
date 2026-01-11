@@ -62,12 +62,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB2C9sU4qN7P4Pai5lt3Kvp5qwFJ-LXbQE',
-    appId: '1:281285545629:ios:demo',
+    apiKey: 'AIzaSyAb4SfiBE4ExuhKRwQyp-b8ftoBMHhobrg',
+    appId: '1:281285545629:ios:29bc3ad4c3c951f8518e74',
     messagingSenderId: '281285545629',
     projectId: 'tashlehekom',
     storageBucket: 'tashlehekom.firebasestorage.app',
-    iosBundleId: 'com.tashlehekom.app',
+    iosBundleId: 'com.tashlehekomv2.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
