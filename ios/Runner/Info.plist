@@ -51,5 +51,7 @@
 	<string>يحتاج التطبيق للوصول إلى الكاميرا لالتقاط صور قطع الغيار والسيارات</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>يحتاج التطبيق لحفظ الصور في مكتبة الصور</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
