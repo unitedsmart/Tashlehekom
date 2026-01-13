@@ -308,6 +308,64 @@ class FirebaseAuthProvider with ChangeNotifier {
   /// التحقق من حالة الاتصال
   bool get isOnline => _dbService.isOnline;
 
+  // ==================== وضع Demo لمراجعة Apple ====================
+
+  /// بيانات حساب Demo للاختبار
+  static const String demoUsername = 'demo';
+  static const String demoPassword = 'demo123';
+  static const String demoPhoneNumber = '+966500000000';
+
+  /// تسجيل الدخول بحساب Demo (للمراجعة من Apple)
+  Future<bool> loginAsDemo(String username, String password) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      print('🔍 محاولة تسجيل الدخول كـ Demo...');
+      print(
+          '📝 Username: $username, Password: ${password.replaceAll(RegExp(r'.'), '*')}');
+
+      // التحقق من بيانات Demo
+      if (username.toLowerCase() == demoUsername && password == demoPassword) {
+        print('✅ بيانات Demo صحيحة');
+
+        // إنشاء مستخدم Demo
+        final demoUser = UserModel(
+          id: 'demo_user_apple_review',
+          username: 'مستخدم Demo',
+          name: 'مستخدم Demo للمراجعة',
+          phoneNumber: demoPhoneNumber,
+          email: 'demo@tashlehekom.com',
+          userType: UserType.seller,
+          isApproved: true,
+          createdAt: DateTime.now(),
+        );
+
+        _currentUser = demoUser;
+        await _saveUserSession(demoUser.id);
+
+        _isLoading = false;
+        notifyListeners();
+
+        print('✅ تم تسجيل الدخول بحساب Demo بنجاح');
+        return true;
+      } else {
+        print('❌ بيانات Demo غير صحيحة');
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      print('❌ خطأ في تسجيل الدخول كـ Demo: $e');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// التحقق مما إذا كان المستخدم الحالي هو Demo
+  bool get isDemoUser => _currentUser?.id == 'demo_user_apple_review';
+
   // ==================== دوال إضافية للتوافق مع HomeScreen ====================
 
   /// فحص حالة المصادقة

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tashlehekomv2/providers/firebase_auth_provider.dart';
 import 'package:tashlehekomv2/screens/auth/register_screen.dart';
 import 'package:tashlehekomv2/screens/auth/firebase_otp_verification_screen.dart';
-import 'package:tashlehekomv2/models/user_model.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -164,48 +163,39 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 16),
 
-              // Test login button for blocked devices
+              // Demo Login للمراجعة من Apple
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.orange[50],
+                  color: Colors.purple[50],
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange[200]!),
+                  border: Border.all(color: Colors.purple[200]!),
                 ),
                 child: Column(
                   children: [
                     const Icon(
-                      Icons.warning_amber,
-                      color: Colors.orange,
+                      Icons.admin_panel_settings,
+                      color: Colors.purple,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'مشكلة في إرسال رمز التحقق؟',
+                      'Demo Account (For Review)',
                       style: TextStyle(
-                        color: Colors.orange[700],
+                        color: Colors.purple[700],
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
-                      onPressed: () => _handleTestLogin(),
+                      onPressed: () => _showDemoLoginDialog(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: Colors.purple,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 8),
                       ),
-                      child: const Text('دخول تجريبي'),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'للاختبار فقط - سيتم إنشاء حساب مؤقت',
-                      style: TextStyle(
-                        color: Colors.orange[600],
-                        fontSize: 11,
-                      ),
-                      textAlign: TextAlign.center,
+                      child: const Text('Demo Login'),
                     ),
                   ],
                 ),
@@ -270,7 +260,79 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _handleTestLogin() async {
+  /// عرض نافذة تسجيل الدخول Demo
+  void _showDemoLoginDialog() {
+    final usernameController = TextEditingController();
+    final passwordController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Demo Login'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Enter demo credentials',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: usernameController,
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                hintText: 'demo',
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                hintText: '••••••',
+                prefixIcon: Icon(Icons.lock),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _handleDemoLogin(
+                usernameController.text,
+                passwordController.text,
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Login'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// معالجة تسجيل الدخول Demo
+  Future<void> _handleDemoLogin(String username, String password) async {
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter username and password'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -279,34 +341,29 @@ class _LoginScreenState extends State<LoginScreen> {
       final authProvider =
           Provider.of<FirebaseAuthProvider>(context, listen: false);
 
-      // إنشاء مستخدم تجريبي
-      final testUser = UserModel(
-        id: 'test_${DateTime.now().millisecondsSinceEpoch}',
-        username: 'مستخدم تجريبي',
-        name: 'مستخدم تجريبي',
-        phoneNumber: _phoneController.text.isNotEmpty
-            ? _phoneController.text
-            : '0508432346',
-        userType: UserType.individual,
-        isApproved: true,
-        createdAt: DateTime.now(),
-      );
-
-      // تسجيل الدخول بالمستخدم التجريبي
-      await authProvider.updateUser(testUser);
+      final success = await authProvider.loginAsDemo(username, password);
 
       setState(() {
         _isLoading = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم تسجيل الدخول كمستخدم تجريبي'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Demo login successful! ✓'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid demo credentials'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (e) {
       setState(() {
@@ -316,7 +373,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('خطأ في تسجيل الدخول التجريبي: ${e.toString()}'),
+            content: Text('Error: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
