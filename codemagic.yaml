@@ -8,11 +8,11 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.tashlehekomv2.app
+        bundle_identifier: com.tashlehkomv2.app
       vars:
         APP_STORE_CONNECT_ISSUER_ID: 23fde2fc-bad6-4a20-ac93-62f9c8090838
         APP_STORE_CONNECT_KEY_IDENTIFIER: 7GHHGS9K5W
-        BUNDLE_ID: com.tashlehekomv2.app
+        BUNDLE_ID: com.tashlehkomv2.app
       flutter: stable
       xcode: latest
       cocoapods: default
