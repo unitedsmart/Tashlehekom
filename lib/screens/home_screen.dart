@@ -10,6 +10,11 @@ import 'package:tashlehekomv2/screens/settings/language_settings_screen.dart';
 import 'package:tashlehekomv2/screens/profile/profile_screen.dart';
 import 'package:tashlehekomv2/screens/notifications/notifications_screen.dart';
 import 'package:tashlehekomv2/screens/parts/parts_screen.dart';
+import 'package:tashlehekomv2/screens/parts/my_requests_screen.dart';
+import 'package:tashlehekomv2/screens/parts/create_part_request_screen.dart';
+import 'package:tashlehekomv2/screens/parts/shop_requests_screen.dart';
+import 'package:tashlehekomv2/models/user_model.dart';
+import 'package:tashlehekomv2/screens/search_screen.dart';
 import 'package:tashlehekomv2/widgets/car_card.dart';
 import 'package:tashlehekomv2/widgets/search_filter_bar.dart';
 import 'package:tashlehekomv2/widgets/app_drawer.dart';
@@ -326,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // إحصائيات سريعة
+          // إحصائيات سريعة - بيانات حقيقية من Firebase
           Container(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -341,32 +346,42 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatCard('1,234', 'السيارات',
-                          Icons.directions_car, Colors.green),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildStatCard(
-                          '5,678', 'قطع الغيار', Icons.build, Colors.orange),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatCard(
-                          '2,345', 'المعاملات', Icons.receipt, Colors.blue),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildStatCard(
-                          '890', 'المستخدمين', Icons.people, Colors.purple),
-                    ),
-                  ],
+                FutureBuilder<Map<String, dynamic>>(
+                  future: _firestoreService.getStatistics(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: _buildStatCard('...', 'السيارات',
+                                Icons.directions_car, Colors.green),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildStatCard('...', 'قطع الغيار',
+                                Icons.build, Colors.orange),
+                          ),
+                        ],
+                      );
+                    }
+
+                    final stats = snapshot.data ?? {};
+                    final carsCount = stats['activeCars'] ?? 0;
+
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(carsCount.toString(),
+                              'السيارات', Icons.directions_car, Colors.green),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildStatCard(
+                              '0', 'قطع الغيار', Icons.build, Colors.orange),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -391,12 +406,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: _buildActionCard(
-                          'شراء قطع غيار', Icons.shopping_cart, Colors.orange,
+                          'تصفح السيارات', Icons.directions_car, Colors.green,
                           () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const PartsScreen(),
+                            builder: (context) => const SearchScreen(),
                           ),
                         );
                       }),
@@ -404,8 +419,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildActionCard(
-                          'بيع سيارة', Icons.sell, Colors.blue, () {
-                        Navigator.pushNamed(context, '/login');
+                          'طلب قطعة غيار', Icons.build, Colors.orange, () {
+                        final authProvider = Provider.of<FirebaseAuthProvider>(
+                            context,
+                            listen: false);
+                        if (authProvider.isLoggedIn) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CreatePartRequestScreen(),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                          );
+                        }
                       }),
                     ),
                   ],
@@ -415,28 +448,59 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: _buildActionCard(
-                          'خدمة التوصيل', Icons.local_shipping, Colors.red, () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('خدمة التوصيل قريباً'),
-                            backgroundColor: Colors.orange,
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                          'طلباتي', Icons.list_alt, Colors.blue, () {
+                        final authProvider = Provider.of<FirebaseAuthProvider>(
+                            context,
+                            listen: false);
+                        if (authProvider.isLoggedIn) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyRequestsScreen(),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                          );
+                        }
                       }),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildActionCard(
-                          'تقييم سيارة', Icons.assessment, Colors.purple, () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('خدمة تقييم السيارة قريباً'),
-                            backgroundColor: Colors.orange,
-                            duration: Duration(seconds: 2),
-                          ),
+                    // زر للتشاليح فقط
+                    Consumer<FirebaseAuthProvider>(
+                      builder: (context, auth, _) {
+                        final user = auth.currentUser;
+                        final isShop = user != null &&
+                            (user.userType == UserType.junkyardOwner ||
+                                user.userType == UserType.worker);
+                        return Expanded(
+                          child: _buildActionCard(
+                              isShop ? 'الطلبات الواردة' : 'قطع الغيار',
+                              isShop ? Icons.inbox : Icons.build,
+                              Colors.purple, () {
+                            if (isShop) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ShopRequestsScreen(),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PartsScreen(),
+                                ),
+                              );
+                            }
+                          }),
                         );
-                      }),
+                      },
                     ),
                   ],
                 ),

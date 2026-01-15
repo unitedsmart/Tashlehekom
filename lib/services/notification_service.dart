@@ -155,4 +155,86 @@ class NotificationService {
       type: NotificationType.newRating,
     );
   }
+
+  // ==================== إشعارات قطع الغيار ====================
+
+  /// إرسال إشعار عند استلام عرض جديد على طلب قطعة غيار
+  Future<void> notifyNewOffer({
+    required String userId,
+    required String partName,
+    required String shopName,
+    required double price,
+    required String requestId,
+  }) async {
+    await sendNotificationToUser(
+      userId: userId,
+      title: 'عرض جديد على طلبك',
+      body:
+          'استلمت عرضاً من $shopName بسعر ${price.toStringAsFixed(0)} ريال على طلب $partName',
+      type: NotificationType.newOffer,
+      relatedId: requestId,
+      data: {
+        'request_id': requestId,
+        'shop_name': shopName,
+        'price': price,
+      },
+    );
+  }
+
+  /// إرسال إشعار عند قبول العرض
+  Future<void> notifyOfferAccepted({
+    required String shopId,
+    required String partName,
+    required String customerName,
+    required String offerId,
+  }) async {
+    await sendNotificationToUser(
+      userId: shopId,
+      title: 'تم قبول عرضك!',
+      body: 'قام $customerName بقبول عرضك على $partName',
+      type: NotificationType.offerAccepted,
+      relatedId: offerId,
+      data: {
+        'offer_id': offerId,
+        'customer_name': customerName,
+      },
+    );
+  }
+
+  /// إرسال إشعار عند رفض العرض
+  Future<void> notifyOfferRejected({
+    required String shopId,
+    required String partName,
+    required String offerId,
+  }) async {
+    await sendNotificationToUser(
+      userId: shopId,
+      title: 'تم رفض عرضك',
+      body: 'نأسف، تم رفض عرضك على $partName',
+      type: NotificationType.offerRejected,
+      relatedId: offerId,
+    );
+  }
+
+  /// إرسال إشعار للتشاليح عند وجود طلب جديد في مدينتهم
+  Future<void> notifyNewPartRequest({
+    required String shopId,
+    required String partName,
+    required String carInfo,
+    required String city,
+    required String requestId,
+  }) async {
+    await sendNotificationToUser(
+      userId: shopId,
+      title: 'طلب قطعة غيار جديد',
+      body: 'طلب جديد: $partName لـ $carInfo في $city',
+      type: NotificationType.newPartRequest,
+      relatedId: requestId,
+      data: {
+        'request_id': requestId,
+        'part_name': partName,
+        'city': city,
+      },
+    );
+  }
 }

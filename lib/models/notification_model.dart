@@ -91,4 +91,8 @@ enum NotificationType {
   priceChange, // تغيير السعر
   carExpired, // انتهاء صلاحية الإعلان
   reminder, // تذكير
+  newOffer, // عرض جديد على طلب قطعة غيار
+  offerAccepted, // تم قبول العرض
+  offerRejected, // تم رفض العرض
+  newPartRequest, // طلب قطعة غيار جديد
 }

@@ -17,9 +17,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _junkyardController = TextEditingController();
 
-  UserType _selectedUserType = UserType.individual;
+  // نوع الحساب ثابت: فرد فقط
+  final UserType _selectedUserType = UserType.individual;
   String? _selectedCity;
   bool _isLoading = false;
 
@@ -35,7 +35,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _usernameController.dispose();
     _phoneController.dispose();
-    _junkyardController.dispose();
     super.dispose();
   }
 
@@ -60,25 +59,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 32),
 
-              // User type selection
-              Text(
-                'نوع الحساب',
-                style: Theme.of(context).textTheme.titleMedium,
+              // نوع الحساب ثابت: فرد فقط
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.person, color: Colors.green[700]),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'نوع الحساب: فرد',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'للأفراد الذين يريدون شراء أو بيع السيارات',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.green[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.check_circle, color: Colors.green[700]),
+                  ],
+                ),
               ),
-
-              const SizedBox(height: 8),
-
-              ...UserType.values.map((type) => RadioListTile<UserType>(
-                    title: Text(type.displayName),
-                    subtitle: Text(_getUserTypeDescription(type)),
-                    value: type,
-                    groupValue: _selectedUserType,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedUserType = value!;
-                      });
-                    },
-                  )),
 
               const SizedBox(height: 24),
 
@@ -155,19 +173,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
 
-              // Junkyard name field (for workers)
-              if (_selectedUserType == UserType.worker) ...[
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _junkyardController,
-                  decoration: const InputDecoration(
-                    labelText: 'اسم التشليح (اختياري)',
-                    prefixIcon: Icon(Icons.business),
-                    helperText: 'يمكنك تركه فارغاً وسيتم ربطك لاحقاً',
-                  ),
-                ),
-              ],
-
               const SizedBox(height: 32),
 
               // Register button
@@ -234,60 +239,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              // Approval info for junkyard owners
-              if (_selectedUserType == UserType.junkyardOwner)
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.orange[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange[200]!),
-                  ),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.pending_actions,
-                        color: Colors.orange,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'حسابات مالكي التشاليح تحتاج موافقة الإدارة',
-                        style: TextStyle(
-                          color: Colors.orange[700],
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  String _getUserTypeDescription(UserType type) {
-    switch (type) {
-      case UserType.user:
-        return 'مستخدم عادي';
-      case UserType.seller:
-        return 'بائع';
-      case UserType.admin:
-        return 'مدير';
-      case UserType.individual:
-        return 'للأفراد الذين يريدون شراء أو بيع السيارات';
-      case UserType.worker:
-        return 'للعمال في التشاليح';
-      case UserType.junkyardOwner:
-        return 'لمالكي التشاليح (يحتاج موافقة الإدارة)';
-      case UserType.superAdmin:
-        return 'مدير النظام (غير متاح للتسجيل)';
-    }
   }
 
   Future<void> _handleRegister() async {

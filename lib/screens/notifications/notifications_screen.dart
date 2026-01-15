@@ -220,6 +220,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         iconData = Icons.notification_important;
         color = Colors.red;
         break;
+      case NotificationType.newOffer:
+        iconData = Icons.local_offer;
+        color = Colors.green;
+        break;
+      case NotificationType.offerAccepted:
+        iconData = Icons.check_circle;
+        color = Colors.green;
+        break;
+      case NotificationType.offerRejected:
+        iconData = Icons.cancel;
+        color = Colors.red;
+        break;
+      case NotificationType.newPartRequest:
+        iconData = Icons.build;
+        color = Colors.orange;
+        break;
     }
 
     return Container(
