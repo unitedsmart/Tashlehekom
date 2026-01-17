@@ -12,6 +12,8 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.tashlehkomv2.app
+        certificate: tashlehkom_dist
+        provisioning_profile: tashlehkom_profile
     scripts:
       - name: Get Flutter packages
         script: |
