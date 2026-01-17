@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tashlehekomv2/providers/firebase_auth_provider.dart';
 import 'package:tashlehekomv2/screens/auth/register_screen.dart';
 import 'package:tashlehekomv2/screens/auth/firebase_otp_verification_screen.dart';
+import 'package:tashlehekomv2/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,9 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('تسجيل الدخول'),
-      ),
+      appBar: AppBar(title: const Text('تسجيل الدخول')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -37,11 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Logo
-              const Icon(
-                Icons.directions_car,
-                size: 80,
-                color: Colors.green,
-              ),
+              const Icon(Icons.directions_car, size: 80, color: Colors.green),
 
               const SizedBox(height: 24),
 
@@ -55,9 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
               Text(
                 'أدخل رقم جوالك للمتابعة',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
 
@@ -97,8 +92,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         : const Text('تسجيل الدخول'),
@@ -135,10 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Column(
                   children: [
-                    const Icon(
-                      Icons.info_outline,
-                      color: Colors.blue,
-                    ),
+                    const Icon(Icons.info_outline, color: Colors.blue),
                     const SizedBox(height: 8),
                     Text(
                       'يمكنك تصفح السيارات بدون تسجيل دخول',
@@ -151,10 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 4),
                     Text(
                       'لكن ستحتاج لتسجيل الدخول للتواصل مع البائعين',
-                      style: TextStyle(
-                        color: Colors.blue[600],
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.blue[600], fontSize: 12),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -193,7 +183,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         backgroundColor: Colors.purple,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 8),
+                          horizontal: 24,
+                          vertical: 8,
+                        ),
                       ),
                       child: const Text('Demo Login'),
                     ),
@@ -216,8 +208,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     print('🔍 DEBUG: بدء _handleLogin');
 
-    final authProvider =
-        Provider.of<FirebaseAuthProvider>(context, listen: false);
+    final authProvider = Provider.of<FirebaseAuthProvider>(
+      context,
+      listen: false,
+    );
 
     print('🔍 DEBUG: تم الحصول على authProvider: ${authProvider.runtimeType}');
 
@@ -338,8 +332,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final authProvider =
-          Provider.of<FirebaseAuthProvider>(context, listen: false);
+      final authProvider = Provider.of<FirebaseAuthProvider>(
+        context,
+        listen: false,
+      );
 
       final success = await authProvider.loginAsDemo(username, password);
 
@@ -355,7 +351,11 @@ class _LoginScreenState extends State<LoginScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.pop(context);
+          // الانتقال للصفحة الرئيسية بعد Demo Login الناجح
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false,
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
