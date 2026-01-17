@@ -11,7 +11,7 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.tashlehkomv2.app
+        bundle_identifier: com.tashlehekomv2.app
     scripts:
       - name: Get Flutter packages
         script: |
