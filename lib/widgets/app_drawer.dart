@@ -9,6 +9,8 @@ import 'package:tashlehekomv2/screens/notifications/notifications_screen.dart';
 // import 'package:tashlehekomv2/screens/analytics/advanced_analytics_screen.dart';
 // import 'package:tashlehekomv2/screens/reports/report_screen.dart';
 import 'package:tashlehekomv2/screens/settings/language_settings_screen.dart';
+import 'package:tashlehekomv2/screens/settings/privacy_policy_screen.dart';
+import 'package:tashlehekomv2/screens/settings/terms_of_service_screen.dart';
 import 'package:tashlehekomv2/screens/admin/admin_panel_screen.dart';
 import 'package:tashlehekomv2/models/user_model.dart';
 import 'package:tashlehekomv2/l10n/app_localizations.dart';
@@ -724,6 +726,36 @@ class AppDrawer extends StatelessWidget {
                   leading: const Icon(Icons.info),
                   title: const Text('حول التطبيق'),
                   onTap: () => _showAboutDialog(context),
+                ),
+
+                // سياسة الخصوصية
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip, color: Colors.blue),
+                  title: const Text('سياسة الخصوصية'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyScreen(),
+                      ),
+                    );
+                  },
+                ),
+
+                // شروط الاستخدام
+                ListTile(
+                  leading: const Icon(Icons.description, color: Colors.orange),
+                  title: const Text('شروط الاستخدام'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TermsOfServiceScreen(),
+                      ),
+                    );
+                  },
                 ),
 
                 if (user != null) ...[
