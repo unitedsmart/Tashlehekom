@@ -26,6 +26,8 @@ import 'screens/analytics/analytics_dashboard_screen.dart';
 import 'screens/gamification/gamification_screen.dart';
 import 'screens/social/social_community_screen.dart';
 import 'screens/iot/iot_main_screen.dart';
+import 'screens/voice_ai/voice_assistant_screen.dart';
+import 'screens/admin/admin_login_screen.dart';
 
 // Providers
 import 'providers/firebase_auth_provider.dart';
@@ -149,6 +151,7 @@ class TashlehekomApp extends StatelessWidget {
             routes: {
               '/login': (context) => const LoginScreen(),
               '/home': (context) => const MainNavigationScreen(),
+              '/search': (context) => const SearchScreen(),
               '/ai': (context) => const AIMainScreen(),
               '/vr': (context) => const VRMainScreen(),
               '/analytics': (context) => const AnalyticsDashboardScreen(),
@@ -158,6 +161,8 @@ class TashlehekomApp extends StatelessWidget {
                   const SocialCommunityScreen(userId: 'demo'),
               '/iot': (context) =>
                   const IoTMainScreen(carId: 'demo', userId: 'demo'),
+              '/voice_assistant': (context) => const VoiceAssistantScreen(),
+              '/admin_login': (context) => const AdminLoginScreen(),
             },
           );
         },
