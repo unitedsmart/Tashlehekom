@@ -30,7 +30,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.tashlehekom.app"
+    namespace "com.tashlehekomsa.app"
     compileSdk 36
     ndkVersion flutter.ndkVersion
 
@@ -49,7 +49,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.tashlehekom.app"
+        applicationId "com.tashlehekomsa.app"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()

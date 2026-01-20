@@ -1,4 +1,4 @@
-package com.tashlehekom.app
+package com.tashlehekomsa.app
 
 import android.Manifest
 import android.content.pm.PackageManager

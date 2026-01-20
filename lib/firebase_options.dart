@@ -76,6 +76,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '281285545629',
     projectId: 'tashlehekom',
     storageBucket: 'tashlehekom.firebasestorage.app',
-    iosBundleId: 'com.tashlehekom.app',
+    iosBundleId: 'com.tashlehekomsa.app',
   );
 }

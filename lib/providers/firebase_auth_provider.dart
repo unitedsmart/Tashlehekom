@@ -310,10 +310,21 @@ class FirebaseAuthProvider with ChangeNotifier {
 
   // ==================== وضع Demo لمراجعة Apple ====================
 
-  /// بيانات حساب Demo للاختبار
+  /// بيانات حساب Demo للاختبار - يقبل عدة كلمات مرور
   static const String demoUsername = 'demo';
-  static const String demoPassword = 'demo123';
+  static const List<String> demoPasswords = [
+    'demo123',
+    'Demo@123456',
+    'Demo123',
+    'demo@123456',
+  ];
   static const String demoPhoneNumber = '+966500000000';
+
+  /// التحقق من صحة بيانات Demo
+  bool _isValidDemoCredentials(String username, String password) {
+    return username.toLowerCase() == demoUsername &&
+        demoPasswords.contains(password);
+  }
 
   /// تسجيل الدخول بحساب Demo (للمراجعة من Apple)
   Future<bool> loginAsDemo(String username, String password) async {
@@ -325,8 +336,8 @@ class FirebaseAuthProvider with ChangeNotifier {
       print(
           '📝 Username: $username, Password: ${password.replaceAll(RegExp(r'.'), '*')}');
 
-      // التحقق من بيانات Demo
-      if (username.toLowerCase() == demoUsername && password == demoPassword) {
+      // التحقق من بيانات Demo - يقبل عدة كلمات مرور
+      if (_isValidDemoCredentials(username, password)) {
         print('✅ بيانات Demo صحيحة');
 
         // إنشاء مستخدم Demo

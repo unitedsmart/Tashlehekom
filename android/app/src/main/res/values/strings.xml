@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">تشليحكم</string>
-    <string name="app_name_ar">تشليحكم</string>
+    <string name="app_name">تشليحكم - قطع غيار</string>
+    <string name="app_name_ar">تشليحكم - قطع غيار</string>
 
     <!-- Firebase Auth SMS Template -->
     <string name="firebase_auth_sms_template">رمز التحقق الخاص بك في تطبيق تشليحكم هو: %s\nصالح لمدة 5 دقائق</string>
 
     <!-- App Display Name for Firebase -->
-    <string name="firebase_app_name">تشليحكم</string>
+    <string name="firebase_app_name">تشليحكم - قطع غيار</string>
 </resources>
