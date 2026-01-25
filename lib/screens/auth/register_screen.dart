@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tashlehekomv2/models/user_model.dart';
-import 'package:tashlehekomv2/providers/auth_provider.dart';
 import 'package:tashlehekomv2/providers/car_provider.dart';
 import 'package:tashlehekomv2/providers/firebase_auth_provider.dart';
 import 'package:tashlehekomv2/screens/auth/firebase_otp_verification_screen.dart';
@@ -18,8 +16,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _usernameController = TextEditingController();
   final _phoneController = TextEditingController();
 
-  // نوع الحساب ثابت: فرد فقط
-  final UserType _selectedUserType = UserType.individual;
   String? _selectedCity;
   bool _isLoading = false;
 
@@ -310,34 +306,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final authProvider =
           Provider.of<FirebaseAuthProvider>(context, listen: false);
 
-      // إنشاء مستخدم تجريبي
-      final testUser = UserModel(
-        id: 'test_${DateTime.now().millisecondsSinceEpoch}',
-        username: 'مستخدم تجريبي',
-        name: 'مستخدم تجريبي',
-        phoneNumber: _phoneController.text.isNotEmpty
-            ? _phoneController.text
-            : '0508432346',
-        userType: _selectedUserType,
-        isApproved: true,
-        createdAt: DateTime.now(),
-      );
-
-      // تسجيل الدخول بالمستخدم التجريبي
-      await authProvider.updateUser(testUser);
+      // تسجيل الدخول بحساب Demo التجريبي
+      // استخدام نفس طريقة loginAsDemo لتجنب الأخطاء
+      final success = await authProvider.loginAsDemo('demo', 'demo123');
 
       setState(() {
         _isLoading = false;
       });
 
-      if (mounted) {
+      if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('تم تسجيل الدخول كمستخدم تجريبي'),
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context);
+        // الانتقال للصفحة الرئيسية
+        await Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (route) => false);
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('فشل تسجيل الدخول التجريبي'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
       setState(() {
