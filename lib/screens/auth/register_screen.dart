@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tashlehekomv2/providers/car_provider.dart';
 import 'package:tashlehekomv2/providers/firebase_auth_provider.dart';
 import 'package:tashlehekomv2/screens/auth/firebase_otp_verification_screen.dart';
+import 'package:tashlehekomv2/screens/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -321,9 +322,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        // الانتقال للصفحة الرئيسية
-        await Navigator.of(context)
-            .pushNamedAndRemoveUntil('/home', (route) => false);
+        // الانتقال للصفحة الرئيسية باستخدام MaterialPageRoute
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
+        );
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
