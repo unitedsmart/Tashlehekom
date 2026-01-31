@@ -153,41 +153,60 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 16),
 
-              // Demo Login للمراجعة من Apple
+              // Demo Login للمراجعة من Apple - واضح ومباشر
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.purple[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.purple[200]!),
+                  color: Colors.purple[100],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.purple[400]!, width: 2),
                 ),
                 child: Column(
                   children: [
                     const Icon(
                       Icons.admin_panel_settings,
                       color: Colors.purple,
+                      size: 40,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Demo Account (For Review)',
+                    const SizedBox(height: 12),
+                    const Text(
+                      '🍎 Apple Review Demo Account',
                       style: TextStyle(
-                        color: Colors.purple[700],
-                        fontWeight: FontWeight.w500,
+                        color: Colors.purple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () => _showDemoLoginDialog(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 8,
+                    const Text(
+                      'Username: demo\nPassword: demo123',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _handleQuickDemoLogin(),
+                        icon: const Icon(Icons.login),
+                        label: const Text(
+                          'Demo Login (Full Access)',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.purple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 14,
+                          ),
                         ),
                       ),
-                      child: const Text('Demo Login'),
                     ),
                   ],
                 ),
@@ -247,6 +266,63 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('خطأ: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// تسجيل الدخول السريع بحساب Demo
+  Future<void> _handleQuickDemoLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final authProvider = Provider.of<FirebaseAuthProvider>(
+        context,
+        listen: false,
+      );
+
+      // تسجيل الدخول مباشرة بـ demo/demo123
+      final success = await authProvider.loginAsDemo('demo', 'demo123');
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Demo login successful! Full access granted ✓'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // الانتقال للصفحة الرئيسية
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Demo login failed'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

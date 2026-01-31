@@ -258,9 +258,14 @@ class FirebaseAuthProvider with ChangeNotifier {
   bool canAddCar() {
     if (_currentUser == null) return false;
 
+    // Demo user has full access for Apple Review
+    if (isDemoUser) return true;
+
     return _currentUser!.userType == UserType.seller ||
         _currentUser!.userType == UserType.admin ||
-        _currentUser!.userType == UserType.superAdmin;
+        _currentUser!.userType == UserType.superAdmin ||
+        _currentUser!.userType == UserType.junkyardOwner ||
+        _currentUser!.userType == UserType.individual;
   }
 
   /// التحقق من صلاحية الإدارة
